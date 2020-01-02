@@ -10,9 +10,9 @@ using namespace std;
 
 #include "SampleCrypt.h"
 #ifdef _DEBUG
-#pragma comment(lib, "libcryptoMDd.lib")
+#pragma comment(lib, "libcrypto.lib")
 #else
-#pragma comment(lib, "libcryptoMD.lib")
+#pragma comment(lib, "libcrypto.lib")
 #endif // DEBUG
 
 // ³£Á¿

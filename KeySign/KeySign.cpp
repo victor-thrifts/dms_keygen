@@ -82,7 +82,8 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 	desc.add_options()
 		("help", "produce help message")
 		("id", po::value<int>()->default_value(1), "set production id:\n 1 dms \n  2 das")
-		("count", po::value<int>()->default_value(1), "set license permit count.")
+		("clicnt", po::value<int>()->default_value(2), "set license permit count.")
+		("usrcnt", po::value<int>()->default_value(10), "set login users count.")
 		("type", po::value<int>()->default_value(3), "set license type: \n 2  permanent \n 3  perid")
 		("date", po::value<string>()->default_value(buffer), "active till the date")
 		("company", po::value<string>()->default_value("company"), "company license to")
@@ -90,7 +91,13 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 		("out", po::value<string>()->default_value("dms.lic"), "the license file output path")
 		;
 	po::variables_map vm;
-	po::store(po::parse_command_line(argc, argv, desc), vm);
+	try{
+		po::store(po::parse_command_line(argc, argv, desc), vm);
+	}
+	catch (exception e){
+		cout << desc << "\n";
+		exit;
+	}
 	po::notify(vm);
 	if (vm.count("help")) {
 		cout << desc << "\n";
@@ -110,9 +117,10 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 
 	ifstream infile(vm["in"].as<string>(), ios_base::in | ios_base::binary);
 	ostringstream sbuf; sbuf << infile.rdbuf();
-	sbuf << "LICENSEID=" + to_string(vm["id"].as<int>()) + '\n';
+	sbuf << "\nLICENSEID=" + to_string(vm["id"].as<int>()) + '\n';
 	sbuf << "LICENSETYPE=" + to_string(vm["type"].as<int>()) + '\n';
-	sbuf << "PRINTCLIENTCOUNT=" + to_string(vm["count"].as<int>()) + '\n';
+	sbuf << "PRINTCLIENTCOUNT=" + to_string(vm["clicnt"].as<int>()) + '\n';
+	sbuf << "USERCOUNT=" + to_string(vm["usrcnt"].as<int>()) + '\n';
 	sbuf << "EXPIREDAY=" + vm["date"].as<string>() + '\n';
 	sbuf << "LICENSENAME=" + vm["company"].as<string>();
 	string plaintext(sbuf.str());
@@ -120,8 +128,7 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 
 	SampleCrypt ciper;
 	vector<string> rr = ciper.getRSAKey();
-	unsigned char sig[10240]; size_t sig_len = 0;
-	memset(sig, 0, 10240);
+	unsigned char *sig; size_t sig_len = 0;
 	plaintext = ciper.rsa_pri_split117_encrypt(plaintext, rr[1]);
 	nRetCode = ciper.sign((unsigned char*)plaintext.c_str(), plaintext.size(), (unsigned char**)&sig, &sig_len, (unsigned char*)rr[1].c_str());
 	sbuf.str("");
@@ -130,12 +137,14 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 	string out = ciper.rsa_pri_split117_encrypt(sbuf.str(), rr[1]);
 
 	ofstream outfile;
-	outfile.open(vm["out"].as<string>(), ios_base::ate | ios_base::out | ios_base::binary);
+	string strout = vm["out"].as<string>();
+	outfile.open(strout, ios_base::ate | ios_base::out | ios_base::binary);
 	istringstream sbuf1; sbuf1.str(out);
 	sbuf1 >> outfile.rdbuf();
+	outfile.flush();
 	outfile.close();
 
-	GetFileID();
+	//GetFileID();
 
 	return nRetCode;
 }

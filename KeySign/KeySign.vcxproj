@@ -43,8 +43,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\SDK\boost_1_71_0;D:\SDK\opensslw\openssl-1.1.0f-vs2013\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\SDK\boost_1_71_0\stage\lib;D:\SDK\opensslw\openssl-1.1.0f-vs2013\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\SDK\boost_1_71_0;D:\SDK\openssl\x86\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\SDK\boost_1_71_0\stage\lib;D:\SDK\openssl\x86\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
